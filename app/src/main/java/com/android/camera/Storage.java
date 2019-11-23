@@ -22,6 +22,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.provider.MediaStore.Images;
@@ -32,6 +33,7 @@ import android.util.LruCache;
 import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.util.AndroidContext;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
@@ -46,8 +48,14 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 
 public class Storage {
-    public static final String DCIM =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
+    public static final String DCIM;
+    static {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            DCIM = AndroidContext.instance().get().getExternalFilesDir(Environment.DIRECTORY_DCIM).toString();
+        } else {
+            DCIM = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
+        }
+    }
     public static final String DIRECTORY = DCIM + "/Camera";
     public static final File DIRECTORY_FILE = new File(DIRECTORY);
     public static final String JPEG_POSTFIX = ".jpg";
